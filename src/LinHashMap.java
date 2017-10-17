@@ -146,11 +146,14 @@ public class LinHashMap <K, V>
     public V put (K key, V value)
     {
         int i = h (key);
+        i = java.lang.Math.abs(i);
         out.println ("LinearHashMap.put: key = " + key + ", h() = " + i + ", value = " + value);
 
         //  Implemented by Peter Choi
-        if(i<split)
+        if(i<split){
             i = h2(key);
+            i = java.lang.Math.abs(i);
+        }
         if(key==null)
             return null;
         Bucket t = hTable.get(i);
