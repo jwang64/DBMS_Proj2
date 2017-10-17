@@ -1,0 +1,5 @@
+CSCI4370 Project 2 Report - Peter Choi
+
+For this project, I implemented all the methods that were required in the B+ Tree, as seen in the BpTreeMap.java file. The main issue I faced was trying to understand the existing codebase. I initially thought at first that the B+ tree code already has a linked list between leaf nodes, but I found that this is not the case. Using traversal methods and recursion, I was able to find a solution to the problem. The recursion also made my code more reusable as methods can just call others to simplify work.
+
+As far as testing goes, I tried out a variety of number of keys. I displayed the entrySet, headMapto 6, tailMap from 6, subMap from 6 to 10, as well as the first and last key. The only point of failure is when the number of keys is limited to 0 using command line arguments. This is a strange case as it's an artificial constraint and a tree cannot exist without a root node, so it's not an issue.

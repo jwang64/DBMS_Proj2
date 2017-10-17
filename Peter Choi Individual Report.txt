@@ -1,0 +1,11 @@
+CSCI4370 Project 2 Report - Peter Choi
+
+For this project, I implemented all the methods that were required in the LinHashMap.java file.
+Some issues I faced dealt mostly with the lack of knowledge of how hashing works. I ended up looking up
+a couple of videos, and did some of my own research to understand what hashing was. Another problem I had was
+trying to understand what we were required to do with the Table.java file. It was brought up that there were 
+blank methods reserved for the hashing and btree joins, but we were not to implement them. After I changed the value
+of the mType, everything seemed to work fine. Some of the test cases that I considered was the possiblity of a negative 
+key value. I solved this by normalizing the key value. Overall, this project should not have been too difficult, but was 
+made more difficult through the lack of information we were given. That being said, TA's and the professor in the forums 
+aided me to know what we were supposed to do. 

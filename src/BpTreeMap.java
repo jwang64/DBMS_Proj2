@@ -26,7 +26,7 @@ public class BpTreeMap <K extends Comparable <K>, V>
 {
     /** The debug flag
      */
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     /** The maximum fanout (number of children) for a B+Tree node.
      *  May wish to increase for better performance for Program 3.
@@ -165,12 +165,36 @@ public class BpTreeMap <K extends Comparable <K>, V>
      */
     public Set <Map.Entry <K, V>> entrySet ()
     {
-        Set <Map.Entry <K, V>> enSet = new HashSet <> ();
-
-        //  T O   B E   I M P L E M E N T E D
-            
-        return enSet;
+        // Implemented by Anurag Banerjee
+        return entrySet(root);
     } // entrySet
+
+
+    /********************************************************************************
+     * Return a set containing all the entries as pairs of keys and values.
+     * @return  the set view of the map
+     */
+    public Set <Map.Entry <K, V>> entrySet (Node n)
+    {
+        // Implemented by Anurag Banerjee
+        if (n.isLeaf) { // base case
+            Set <Map.Entry <K, V>> leaves = new HashSet <> ();
+            for (int i = 0; i < n.nKeys; i++) {
+                leaves.add(new AbstractMap.SimpleEntry<K, V>(n.key[i], (V) n.ref[i]));
+            }
+            return leaves;
+        } else {
+            Set <Map.Entry <K, V>> childNodes = new HashSet <> ();
+            for (Node node: (Node[]) n.ref) {
+                if (node != null) {
+                    childNodes.addAll(entrySet(node)); // recursive step
+                }
+            }
+
+            return childNodes;
+        }
+    } // entrySet
+
 
     /********************************************************************************
      * Given the key, look up the value in the B+Tree map.
@@ -210,9 +234,15 @@ public class BpTreeMap <K extends Comparable <K>, V>
      */
     public K lastKey () 
     {
-        //  T O   B E   I M P L E M E N T E D
+        // Implemented by Anurag Banerjee
 
-        return null;
+        Node n = root;
+
+        while (!n.isLeaf) {
+            n = ((Node[]) n.ref)[n.nKeys];
+        }
+
+        return n.key[n.nKeys - 1];
     } // lastKey
 
     /********************************************************************************
@@ -221,9 +251,8 @@ public class BpTreeMap <K extends Comparable <K>, V>
      */
     public SortedMap <K,V> headMap (K toKey)
     {
-        //  T O   B E   I M P L E M E N T E D
-
-        return null;
+        // Implemented by Anurag Banerjee
+        return subMap(null, toKey);
     } // headMap
 
     /********************************************************************************
@@ -232,9 +261,8 @@ public class BpTreeMap <K extends Comparable <K>, V>
      */
     public SortedMap <K,V> tailMap (K fromKey)
     {
-        //  T O   B E   I M P L E M E N T E D
-
-        return null;
+        // Implemented by Anurag Banerjee
+        return subMap(fromKey, null);
     } // tailMap
 
     /********************************************************************************
@@ -244,9 +272,29 @@ public class BpTreeMap <K extends Comparable <K>, V>
      */
     public SortedMap <K,V> subMap (K fromKey, K toKey)
     {
-        //  T O   B E   I M P L E M E N T E D
+        // Implemented by Anurag Banerjee
+        BpTreeMap <K, V> submap = new BpTreeMap <> (classK, classV);
 
-        return null;
+        K left = fromKey;
+        if (left == null) {
+            left = firstKey();
+        }
+
+        K right = toKey;
+        if (right == null) {
+            right = lastKey();
+        }
+
+        Set <Map.Entry<K,V>> allEntries = this.entrySet();
+
+        for (Map.Entry<K,V> entry : allEntries) {
+            if (entry.getKey().compareTo(left)  >= 0 &&
+                entry.getKey().compareTo(right) <= 0) {
+                submap.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return submap;
     } // subMap
 
     /********************************************************************************
@@ -309,7 +357,7 @@ public class BpTreeMap <K extends Comparable <K>, V>
     @SuppressWarnings("unchecked")
     private Node insert (K key, V ref, Node n)
     {
-        out.println ("=============================================================");
+        out.println ("\n\n=============================================================");
         out.println ("insert: key = " + key);
         out.println ("=============================================================");
 
@@ -420,10 +468,15 @@ public class BpTreeMap <K extends Comparable <K>, V>
    
         if (RANDOMLY) {
             Random rng = new Random ();
-            for (int i = 1; i <= totalKeys; i += 2) bpt.put (rng.nextInt (2 * totalKeys), i * i);
+            for (int i = 1; i <= totalKeys; i += 2) {
+                bpt.put (rng.nextInt (2 * totalKeys), i * i);
+            }
         } else {
-            for (int i = 1; i <= totalKeys; i += 2) bpt.put (i, i * i);
+            for (int i = 1; i <= totalKeys; i += 2) {
+                bpt.put (i, i * i);
+            }
         } // if
+
 
         bpt.print (bpt.root, 0);
         for (int i = 0; i <= totalKeys; i++) {
@@ -431,6 +484,37 @@ public class BpTreeMap <K extends Comparable <K>, V>
         } // for
         out.println ("-------------------------------------------");
         out.println ("Average number of nodes accessed = " + bpt.count / (double) totalKeys);
+
+
+        // Test Cases
+        // Implemented by Anurag Banerjee
+
+        System.out.println("First Key: " + bpt.firstKey());
+        System.out.println("Last Key: " + bpt.lastKey());
+
+        System.out.println("\nEntry Set:");
+        for (Map.Entry s : bpt.entrySet()) {
+            System.out.println(s);
+        }
+        System.out.println("\n");
+
+        System.out.println("\nHeadmap (to 6):");
+        for (Map.Entry s : bpt.headMap(6).entrySet()) {
+            System.out.println(s);
+        }
+        System.out.println("\n");
+
+        System.out.println("\nTailmap (from 6):");
+        for (Map.Entry s : bpt.tailMap(6).entrySet()) {
+            System.out.println(s);
+        }
+        System.out.println("\n");
+
+        System.out.println("\nSubmap (from 6 to 10):");
+        for (Map.Entry s : bpt.subMap(6, 10).entrySet()) {
+            System.out.println(s);
+        }
+        System.out.println("\n");
     } // main
 
 } // BpTreeMap class

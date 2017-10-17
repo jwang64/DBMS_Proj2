@@ -67,7 +67,7 @@ public class Table
 
     /** The map type to be used for indices.  Change as needed.
      */
-    private static final MapType mType = MapType.TREE_MAP;
+    private static final MapType mType = MapType.LINHASH_MAP;
 
     /************************************************************************************
      * Make a map (index) given the MapType.
@@ -163,15 +163,15 @@ public class Table
         List <Comparable []> rows = new ArrayList <> ();
 
         //  James Wang
-		for (int i = 0; i < tuples.size(); i++) // goes through each tuple
-		{
-		    rows.add( extract(tuples.get(i), attrs)); // adds the name of the entity and its attribute
-		}
-		
+        for (int i = 0; i < tuples.size(); i++) // goes through each tuple
+        {
+            rows.add( extract(tuples.get(i), attrs)); // adds the name of the entity and its attribute
+        }
+        
         return new Table (name + count++, attrs, colDomain, newKey, rows);
     } // project
 
-	
+    
     /************************************************************************************
      * Select the tuples satisfying the given predicate (Boolean function).
      *
@@ -182,6 +182,9 @@ public class Table
      */
     public Table select (Predicate <Comparable []> predicate)
     {
+        if(mType == MapType.LINHASH_MAP){
+            index.get(predicate);
+        }//
         out.println ("RA> " + name + ".select (" + predicate + ")");
         return new Table (name + count++, attribute, domain, key,
                    tuples.stream ().filter (t -> predicate.test (t))
@@ -200,13 +203,18 @@ public class Table
         out.println ("RA> " + name + ".select (" + keyVal + ")");
 
         List <Comparable []> rows = new ArrayList <> ();
-	
+    
         //  James Wang 
+<<<<<<< HEAD
 		if(mType == MapType.TREE_MAP)
 		{
 		Comparable[] tableResult = index.get(keyVal); // gets the key and sets it equal to tableResult
 		rows.add(tableResult); // the row adds the table result
 		}
+=======
+        Comparable[] tableResult = index.get(keyVal); // gets the key and sets it equal to tableResult
+        rows.add(tableResult); // the row adds the table result
+>>>>>>> fb7a64b377044add5e365033ec24e461c6b750fa
         return new Table (name + count++, attribute, domain, key, rows);
     } // select
 
@@ -462,11 +470,15 @@ public class Table
     public boolean insert (Comparable [] tup)
     {
         out.println ("DML> insert into " + name + " values ( " + Arrays.toString (tup) + " )");
+<<<<<<< HEAD
 	if(mType == MapType.TREE_MAP)
 	{
+=======
+>>>>>>> fb7a64b377044add5e365033ec24e461c6b750fa
         if (typeCheck (tup)) {
             tuples.add (tup);
             Comparable [] keyVal = new Comparable [key.length];
+            System.out.println(keyVal);
             int []        cols   = match (key);
             for (int j = 0; j < keyVal.length; j++) keyVal [j] = tup [cols [j]];
             if (mType != MapType.NO_MAP) index.put (new KeyType (keyVal), tup);
@@ -829,4 +841,3 @@ public class Table
 
     } // main
 } // Table class
-
