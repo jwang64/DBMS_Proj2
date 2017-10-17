@@ -202,8 +202,11 @@ public class Table
         List <Comparable []> rows = new ArrayList <> ();
 	
         //  James Wang 
+		if(mType == MapType.TREE_MAP)
+		{
 		Comparable[] tableResult = index.get(keyVal); // gets the key and sets it equal to tableResult
 		rows.add(tableResult); // the row adds the table result
+		}
         return new Table (name + count++, attribute, domain, key, rows);
     } // select
 
@@ -293,7 +296,8 @@ public class Table
 
         String [] t_attrs = attributes1.split (" ");
         String [] u_attrs = attributes2.split (" ");
-
+		String[] newAttributes = attributes2.split(" ");
+		
         List <Comparable []> rows = new ArrayList <> ();
 
         //
@@ -301,6 +305,8 @@ public class Table
         // ===== IMPLEMENTED BY ANURAG BANERJEE =====
         //
         //
+		if(mType == MapType.TREE_MAP)
+		{
         this.tuples.stream().forEach((t1_tuple) -> {
             table2.tuples.stream().filter((t2_tuple) -> {
                 // remove tuples where primary key != foreign key
@@ -319,7 +325,7 @@ public class Table
         });
 
         //appending 2 onto the duplicate attribute names
-        String[] newAttributes = table2.attribute;
+        newAttributes = table2.attribute;
         for(int i = 0; i < this.attribute.length; i++){
             for(int j = 0; j< table2.attribute.length; j++){
                 if(this.attribute[i].equals(table2.attribute[j])){
@@ -327,7 +333,7 @@ public class Table
                 }
             }
         }
-
+		}
         //
         //
         // ===== END IMPLEMENTED BY ANURAG BANERJEE =====
@@ -389,7 +395,10 @@ public class Table
         //
         //
         String attributes = "";
-
+		String addString = "";
+		
+		if(mType == MapType.TREE_MAP)
+		{
         // Loop over all the attributes and appending duplicates to attributes string
         for (String t1_attribute : this.attribute) {
             for (String t2_attribute : table2.attribute) {
@@ -413,9 +422,10 @@ public class Table
         totalList.removeAll(dupList);
         
         // Convert list to a string
-        String addString = totalList.toString();
+        addString = totalList.toString();
         addString = addString.substring(1, addString.length() - 1).replaceAll(",", " ");
-
+		}
+	
         return this.join(attributes, attributes, table2).project(attributes + addString);
 
 
@@ -452,7 +462,8 @@ public class Table
     public boolean insert (Comparable [] tup)
     {
         out.println ("DML> insert into " + name + " values ( " + Arrays.toString (tup) + " )");
-
+	if(mType == MapType.TREE_MAP)
+	{
         if (typeCheck (tup)) {
             tuples.add (tup);
             Comparable [] keyVal = new Comparable [key.length];
@@ -460,9 +471,13 @@ public class Table
             for (int j = 0; j < keyVal.length; j++) keyVal [j] = tup [cols [j]];
             if (mType != MapType.NO_MAP) index.put (new KeyType (keyVal), tup);
             return true;
-        } else {
+        }
+		else {
             return false;
-        } // if
+        }	
+	}
+	return false;
+		// if
     } // insert
 
     /************************************************************************************
